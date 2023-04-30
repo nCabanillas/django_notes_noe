@@ -16,7 +16,7 @@ def signup(request):
         
         if request.POST["password1"] == request.POST["password2"]:
             try:
-                user = User.objests.create_user(request.POST["username"],password=request.POST["password1"])
+                user = User.objects.create_user(request.POST["username"],password=request.POST["password1"])
                 user.save()
                 login(request, user)
                 return redirect('tasks')
@@ -32,7 +32,7 @@ def tasks(request):
 
 @login_required
 def tasks_completed(request):
-    tasks = Task.objects.fitler(user=request.user, datecompleted__isnull=False).orderby('-datecompleted')
+    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by('-datecompleted')
     return render(request, 'tasks.html',{'tasks':tasks})
 
 @login_required
@@ -76,7 +76,7 @@ def task_detail(request, task_id):
         return render(request, 'task_detail.html', {'task':task, 'form':form})
     else:
         try:
-            task = get_object_or_404(Tasl, pk=task_id, user=request.user)
+            task = get_object_or_404(Task, pk=task_id, user=request.user)
             form = TaskForm(request.POST, instance=task)
             form.save()
             return redirect('tasks')
